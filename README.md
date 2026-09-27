@@ -20,13 +20,32 @@ Host/Origin 围栏与会话 Cookie。所以本插件**没有自己的令牌体�
 
 ## 安装
 
+本插件是**独立仓库**（仓库根目录就是插件包，插件市场里可直接
+`dsh plugin --profile web add github:SJTUMalPan/dsh-usage-dashboard`）。
+它原先住在 `dsh-usage-stats` 仓库的 `dsh-plugin/` 子目录，拆出来时保留了提交历史。
+
 ```bash
-dsh plugin --profile web add "link:$PWD/dsh-plugin"   # 在仓库根目录执行
+# 从 GitHub 装（跟 main）
+dsh plugin --profile web add github:SJTUMalPan/dsh-usage-dashboard
+
+# 从 GitHub 装（锁 commit，可复现）
+dsh plugin --profile web add "git+https://github.com/SJTUMalPan/dsh-usage-dashboard#<sha>"
+
+# 本机开发（符号链接，改完即生效）
+dsh plugin --profile web add "link:$PWD"   # 在本仓库根目录执行
 ```
 
 `dsh plugin` 会把包交给 pnpm 装进 profile，然后对账 `dsh.profile.bundles`——只要包装了
 `dsh.bundle.patch`，就自动把包名追加进层级列表，**不需要手改 profile 的任何文件**。
 装完**重启 `dsh web`** 生效。
+
+报表本身由 [dsh-usage-stats](https://github.com/SJTUMalPan/dsh-usage-stats) 生成：
+
+```bash
+node dsh-usage.mjs --format html --out <某个路径>/usage-dashboard.html
+```
+
+把它的路径填进下面的 `reportPath` 即可（缺省是本包内的 `report/usage-dashboard.html`）。
 
 ## 访问
 
@@ -48,7 +67,7 @@ http://<你的 dsh web 地址>/usage
       config:
         path: /usage        # 挂载路径，默认 /usage
         reportPath: /abs/path/to/report.html
-        # 默认 <本包>/../usage-dashboard.html，即 dsh-usage-stats/usage-dashboard.html
+        # 默认 <本包>/report/usage-dashboard.html（放这里即可零配置）
 ```
 
 `path` 必须是以 `/` 开头、非根、无尾斜杠且不含查询串/片段的绝对路径——非法值在**装载期**

@@ -13,7 +13,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtemp, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 
 import { apply, inject, name, resolveConfig } from '../lib/index.js'
 
@@ -164,10 +164,10 @@ test('non-GET/HEAD methods are 405 with an Allow header', async () => {
   })
 })
 
-test('default reportPath resolves next to the project output', () => {
+test('default reportPath resolves inside the package', () => {
   const { reportPath } = resolveConfig({}, PACKAGE_ROOT)
-  // <包根>/../../usage-dashboard.html —— 即 dsh-usage-stats/usage-dashboard.html
-  assert.match(reportPath, /dsh-usage-stats\/usage-dashboard\.html$/)
+  // <包根>/report/usage-dashboard.html —— 独立仓库后的缺省位置（见 lib/index.js 注释）
+  assert.match(reportPath, /report\/usage-dashboard\.html$/)
 })
 
 test('rejects a malformed path at load time', () => {
@@ -188,5 +188,6 @@ test('a custom path is honoured', () => {
 
 test('a relative reportPath resolves against the package root', () => {
   const { reportPath } = resolveConfig({ reportPath: '../reports/x.html' }, PACKAGE_ROOT)
-  assert.match(reportPath, /dsh-usage-stats\/reports\/x\.html$/)
+  // 相对路径按**包根**解析，与包被装在哪里无关（因此断言不写死任何仓库名）
+  assert.equal(reportPath, resolve(dirname(PACKAGE_ROOT), 'reports/x.html'))
 })

@@ -31,5 +31,13 @@
     "bundle": {
       "patch": "./cordis.patch.yml"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SJTUMalPan/dsh-usage-dashboard.git"
+  },
+  "homepage": "https://github.com/SJTUMalPan/dsh-usage-dashboard#readme",
+  "bugs": {
+    "url": "https://github.com/SJTUMalPan/dsh-usage-dashboard/issues"
   }
 }
